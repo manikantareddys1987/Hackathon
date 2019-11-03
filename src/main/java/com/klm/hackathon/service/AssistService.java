@@ -37,7 +37,7 @@ public class AssistService {
         String message;
         try {
             Map<String, Object> contentMap = objectMapper.readValue(objectMapper.writeValueAsString(assist), Map.class);
-            esResponse = restClient.performRequest(HttpMethod.POST.name(), "/hack/default/" + assist.getBookingCode(), Collections.emptyMap(), new NStringEntity(objectMapper.writeValueAsString(contentMap), ContentType.APPLICATION_JSON));
+            esResponse = restClient.performRequest(HttpMethod.POST.name(), "/hack/default/" + assist.bookingCode, Collections.emptyMap(), new NStringEntity(objectMapper.writeValueAsString(contentMap), ContentType.APPLICATION_JSON));
 
         }
         catch (Exception exception) {
@@ -75,11 +75,11 @@ public class AssistService {
             Map<String, Object> contentMap = objectMapper.readValue(EntityUtils.toString(esResponse.getEntity()), LinkedHashMap.class);
             Assist assist=objectMapper.convertValue((contentMap.get("_source")),Assist.class);
             if (assistType!=null && assistType.equalsIgnoreCase("true")) {
-                return assist.getAssistDetails().getDepartureAssistDetails();
+                return assist.assistDetails.departureAssistDetails;
             } else if (assistType!=null && assistType.equalsIgnoreCase("false")) {
-                return assist.getAssistDetails().getArrivalAssistDetails();
+                return assist.assistDetails.arrivalAssistDetails;
             } else {
-                return assist.getAssistDetails();
+                return assist.assistDetails;
             }
         }
         catch (Exception exception) {
