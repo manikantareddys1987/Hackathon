@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.klm.hackathon.model.model.model.Assist;
 import com.klm.hackathon.service.AssistService;
 
+import java.io.IOException;
+
 /**
  * @author x085441 (Sathiesh Suyambudhasan)
  * @since Nov 01, 2019
@@ -41,6 +43,12 @@ public class AssistController {
     @GetMapping(value="/getassist/{pnr}")
     public Object getAssist(@PathVariable(value = "pnr", required = true) String pnr,@RequestParam(value="assisttype", required=false) String assistType){
         return assistService.getAssistDetails(pnr,assistType);
+    }
+
+    @PostMapping(value="/updateAdminAndDriver")
+    public String updateAdminAndDriver() throws IOException {
+        assistService.updateAdminAndDriver();
+        return "Updated successfully";
     }
 
 

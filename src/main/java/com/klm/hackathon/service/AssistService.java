@@ -1,10 +1,10 @@
 package com.klm.hackathon.service;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.klm.hackathon.model.model.model.AssistAgentDetails;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
@@ -86,6 +86,19 @@ public class AssistService {
             exception.printStackTrace();
             return null;
         }
+    }
+
+    public void updateAdminAndDriver() throws IOException {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        Response esResponse = restClient.performRequest(HttpMethod.GET.name(), "assistagentdetails/_search?filter_path=hits.hits._source", Collections.emptyMap(), new NStringEntity(searchSourceBuilder.toString(), ContentType.APPLICATION_JSON));
+        Map<String, Object> contentMap = objectMapper.readValue(EntityUtils.toString(esResponse.getEntity()), LinkedHashMap.class);
+        ArrayList assistList=objectMapper.convertValue((contentMap.get("hits.hits")), ArrayList.class);
+        HashMap assistAvailableMap = (HashMap) assistList.stream().filter(assist -> assist instanceof HashMap).filter(assist -> ((String)((HashMap) assist).get("status")).equalsIgnoreCase("open")).findFirst().get();
+        AssistAgentDetails assistAgentDetails=objectMapper.convertValue(assistAvailableMap,AssistAgentDetails.class);
+
+
+
+
     }
 
 }
